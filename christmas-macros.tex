@@ -1,0 +1,261 @@
+
+\input apnum
+\apFRAC=5
+
+\edef\xmasstrudelccode{\the\catcode`\@}
+\catcode`\@=11
+
+%%%%%%%%%%%%%%%%%%%%%%
+%%  Setup macros    %%
+%%%%%%%%%%%%%%%%%%%%%%
+
+\def\@afterfi#1#2\fi{\fi#1}
+\let\xp=\expandafter
+\def\@nul{\errmessage{Dangling nul}\@nul}
+\let\urand=\pdfuniformdeviate
+
+\def\@xmas@repeatit#1#2{\ifnum#1>0 \@afterfi{#2\xp\@xmas@repeatit\xp{\the\numexpr #1-1\relax}{#2}}\fi}
+
+\def\@nextcharcmp{\ifx\@reg@D\@reg@A \xp\@reg@B\else \xp\@reg@C\fi}
+\def\@ifnextchar#1#2#3{%
+    \let\@reg@A=#1\relax\def\@reg@B{#2}\def\@reg@C{#3}%
+    \futurelet\@reg@D\@nextcharcmp%
+}
+
+\def\totphantom#1{{\setbox0=\hbox{#1}\hbox to\wd0{\vrule width0pt height\ht0 depth\dp0\hfil}}}
+\def\placeontop#1#2{\vbox{\offinterlineskip\halign{\hfil##\hfil\cr#1\cr#2\cr}}}
+
+\bgroup
+\lccode`\!=`\p \lccode`\?=`\t
+\lowercase{\egroup \def\rmpt#1!?{#1}}
+
+\def\nopt#1{\expandafter\rmpt\the\dimexpr #1\relax}
+\def\noper#1.#2\@nul{#1}
+\def\decnopt#1{\xp\xp\xp\noper\xp\rmpt\the\dimexpr #1\relax\@nul}
+
+%%%%%%%%%%%%%%%%%%%%%%
+%%  Drawing macros  %%
+%%%%%%%%%%%%%%%%%%%%%%
+
+\def\roundre#1#2#3#4#5{%
+    #1 \nopt{#2pt+#5pt} m
+    \nopt{#1pt-#5pt} \nopt{#2pt+#5pt} \nopt{#1pt-#5pt} #2 v
+    \nopt{#1pt-#5pt} #4 l
+    \nopt{#1pt-#5pt} \nopt{#4pt-#5pt} #1 \nopt{#4pt-#5pt} v
+    #3 \nopt{#4pt-#5pt} l
+    \nopt{#3pt+#5pt} \nopt{#4pt-#5pt} \nopt{#3pt+#5pt} #4 v
+    \nopt{#3pt+#5pt} #2 l
+    \nopt{#3pt+#5pt} \nopt{#2pt+#5pt} #3 \nopt{#2pt+#5pt} v
+    #1 \nopt{#2pt+#5pt} l
+}
+
+\bgroup
+\def\MUS,{%
+% Right mustache
+    0 0 m
+    0 .5 1 1 2 1 c
+    3 1 2.5 .3 4 0 c
+    5 0 6 0 7 1 c
+    6 -1 5 -2 4 -2 c
+    3 -2 .1 -2 0 -1 c
+% Left mustache
+    0 0 m
+    0 .5 -1 1 -2 1 c
+    -3 1 -2.5 .3 -4 0 c
+    -5 0 -6 0 -7 1 c
+    -6 -1 -5 -2 -4 -2 c
+    -3 -2 -.1 -2 0 -1 c}
+
+\def\BEAR,{%
+% Beard
+    0 0 m
+    4 -2 l
+    5 -3 4 -9 0 -10 c
+    -4 -9 -5 -3 -4 -2 c
+    0 0 l}
+
+\xdef\@xmas@santabeard{%
+    \hbox to7pt{}%
+    \pdfliteral{q
+        .996264 0 0 .996264 0 0 cm
+        1 0 0 1 0 1 cm
+        0 0 0 RG 1 1 1 rg
+        .3 w 1 J 1 j
+        \BEAR, B \MUS, B*
+        S Q}%
+    \hbox to7pt{\vrule width0pt height3pt depth9pt\hfil}%
+}
+\egroup
+
+
+\def\@xmas@santahat{\pdfliteral{q 1 0 0 1 0 -2 cm 1 J 0 0 0 RG 1 1 1 rg .1 w 0 3 m -.5 3 -.5 2.5 v -.5 .5 l -.5 0 0 0 v 9 0 l 9.5 0 9.5 .5 v 9.5 2.5 l 9.5 3 9 3 v b
+.8 0 0 rg 0 3 m 0 5 3 7 5 7 c 7 6.5 9 4.5 10 3 c 10.5 1 9 -2 10 -3 c 8 -3 l 8 0 6 3 6 4 c 6.3 3 l b 
+0 0 0 RG 3.75 w 9 -3 0 0 re S
+1 1 1 RG 3.5 w 9 -3 0 0 re S
+Q}
+\vbox to4pt{\hbox to6pt{\hfil}\vfil}}
+
+
+\bgroup
+\def\LEVEL,{0 0 m
+    3 -5 l
+    3 -6 1 -7 0 -7 c
+    -1 -7 -3 -6 -3 -5 c
+    0 0 l
+}
+
+\def\SLEVEL,{q
+    0 .5 0 RG 0 .5 0 rg
+    \LEVEL, W f
+    1 0 0 1 0 3.3 cm
+    0 .3 0 RG 0 .3 0 rg
+    \LEVEL, f
+Q}
+
+\def\TIP,{0 .5 0 RG 0 .5 0 rg \LEVEL, f}
+
+\def\STAR,{-.975 -1.5 m 0 1.5 l .975 -1.5 l -1.5 .405 l 1.5 .405 l h}
+
+\def\CTREE,{q
+    1 j 1 J
+    .996264 0 0 .996264 0 8 cm
+    1 0 0 1 3.5 0 cm
+    .1 w
+    .5 .3 .05 RG .5 .3 .05 rg
+    \roundre{-.5}{-5}{.5}{-8}{.3} B
+    \SLEVEL,
+    .8 0 0 .8 0 2 cm
+    \SLEVEL,
+    .8 0 0 .8 0 2 cm
+    \TIP, B
+    .9 .8 .2 RG .9 .8 .2 rg
+    \STAR, B
+Q}
+
+\xdef\@xmas@christmastree{%
+    \pdfliteral{q \CTREE, Q}%
+    \hbox to 7pt{\vrule width 0pt height13.6pt depth.3pt\hfil}%
+}
+\egroup
+
+\def\@xmas@scale#1[#2]{{%
+    \setbox0=\hbox{#1}%
+    \quitvmode\hbox to #2\wd0{%
+        \hfill%
+        \pdfliteral{q #2 0 0 #2 0 0 cm}\hbox to0pt{\hss#1\hss}\pdfliteral{Q}%
+        \vrule width0pt height #2\ht0 depth #2\dp0%
+        \hfill%
+    }%
+}}
+
+\bgroup
+\def\Y,{-5 0 m 5 0 l -2.5 0 m -4 1 l -2.5 0 m -4 -1 l 2.5 0 m 4 1 l 2.5 0 m 4 -1 l S}
+\def\X,{q \@xmas@repeatit4{.7071 .7071 -.7071 .7071 0 0 cm \Y, } Q}
+\xdef\snowflake{%
+        \pdfliteral{q
+        1 J .8 w
+        \X,
+        1 1 1 RG .6 w
+        \X,
+        Q}%
+}
+\egroup
+
+\bgroup
+    \def\X,{%
+        -.5 10 m
+        -.5 13 2.5 13 v
+        5.5 13 5.5 10 v
+        5.5 9.5 5 9.5 v
+        4.5 9.5 4.5 10 v
+        4.5 12 2.5 12 v
+        .5 12 .5 10 v
+        .5 0 l
+        .5 -.3 .2 -.3 v
+        -.2 -.3 l
+        -.5 -.3 -.5 0 v
+        -.5 10 l
+    }
+
+    \def\Y,{%
+        2.5 0 m
+        -1  1 l
+        2.5 3 m
+        -1  4 l
+        2.5 6 m
+        -1  7 l
+        2.5 9 m
+        -1  10 l
+        2.5 10 m
+        1   14 l
+        2.5 10 m
+        6 12 l
+    }
+
+    \xdef\@xmas@candycane,{%
+        .1 w 1 1 1 rg
+        \X, W* B
+        1.3 w 1 0 0 RG
+        \Y, S
+    }
+\egroup
+
+\def\@xmas@spinning@candycane{{%
+   \edef\X{\urand628}%
+   \evaldef\Y{\COS{\X / 100}}%
+   \evaldef\Z{\SIN{10 / 100}}%
+   \evaldef\W{-\Z}%
+   \pdfliteral{q
+        \Y\space\Z\space\W\space\Y\space 0 0 cm
+        \@xmas@candycane,
+    Q}%
+}}
+
+\def\@xmas@boundingbox,{\roundre0{\nopt{\ht0}}{\nopt{\wd0}}{\nopt{-\dp0}}{1}}
+
+\def\@xmas@bg@shift#1#2#3#4{\pdfliteral{q #3\space 0 0 #3\space #1\space #2\space cm}#4\pdfliteral{Q}}
+
+% #1 -> material
+% #2 -> decoration  #2{<x>}{<y>}{<size>}
+% #3 -> size
+% #4 -> density
+% #5 -> bg
+\def\@xmas@box#1#2#3#4#5{{%
+    \setbox0=\hbox{#1}%
+    \hskip1pt\quitvmode\hbox{%
+        \vrule width0pt height\dimexpr\ht0+1pt\relax depth\dimexpr\dp0+1pt\relax%
+        \pdfliteral{q
+            .3 w #5\space rg
+            .99626 0 0 .99626 0 0 cm
+            \@xmas@boundingbox, W f
+        }%
+        \@xmas@repeatit{\decnopt{#4\wd0 * \decnopt{\ht0 + \dp0}}}%
+            {\@xmas@bg@shift{\urand\nopt{\wd0}}{\nopt{\urand\nopt{\ht0+\dp0}pt-\dp0}}{#3}{#2}}%
+        \pdfliteral{\@xmas@boundingbox, s Q}%
+        \unhbox0%
+    }%
+    \hskip1pt%
+}}
+
+\def\@xmas@santahatted#1[#2]{\quitvmode\hbox{\rlap{\placeontop{\totphantom{\santahat[#2]}}{#1}}\placeontop{\santahat[#2]}{\totphantom{#1}}}}
+\def\@xmas@santabearded#1[#2]{\quitvmode{\setbox0=\hbox{#1}\rlap{#1}\hbox to\wd0{\hss\santabeard[#2]\hss}}}
+\def\@xmas@santa#1[#2]{\@xmas@santahatted{\@xmas@santabearded{#1}[#2]}[#2]}
+
+\def\@xmas@scaleable@object#1{\@ifnextchar[ {\@xmas@scale{#1}}{#1}}
+
+\def\rblap#1{\vbox to\z@{\hbox to\z@{#1\hss}\vss}}
+
+\def\snowbox#1{\@xmas@box{#1}\snowflake{0.3}{0.03}{.5 .9 1}}
+\def\candybox#1{\@xmas@box{#1}\@xmas@spinning@candycane{0.3}{0.05}{1 .5 .7}}
+\def\santabox#1{\@xmas@box{#1}{\rblap{\santa{\vphantom{x}}}}{0.3}{0.03}{1 1 1}}
+
+\def\santahat{\@xmas@scaleable@object\@xmas@santahat}
+\def\santabeard{\@xmas@scaleable@object\@xmas@santabeard}
+\def\christmastree{\@xmas@scaleable@object\@xmas@christmastree}
+
+\def\santahatted#1{\@ifnextchar[ {\@xmas@santahatted{#1}}{\@xmas@santahatted{#1}[1]}}
+\def\santabearded#1{\@ifnextchar[ {\@xmas@santabearded{#1}}{\@xmas@santabearded{#1}[1]}}
+\def\santa#1{\@ifnextchar[ {\@xmas@santa{#1}}{\@xmas@santa{#1}[1]}}
+
+\catcode`\@=\xmasstrudelccode
+
